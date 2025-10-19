@@ -1175,9 +1175,10 @@
       // Clear session
       localStorage.removeItem('etax_logged_in_user');
       localStorage.removeItem('etax_user_info');
+      sessionStorage.removeItem('etax_logged_in_user');
 
       // Redirect to login
-      // window.location.href = '/login.html'; // DISABLED FOR SIMULATOR
+      window.location.href = '/login.html';
     }
 
     // Function hiển thị thông báo

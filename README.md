@@ -1,84 +1,157 @@
-# eTax Mobile PWA
+# eTax Mobile PWA - Documentation
 
-**Clone 100% UX/UI eTax chính thức thành PWA tĩnh, tối ưu cho mobile với trải nghiệm native.**
+## 🎯 **PROJECT OVERVIEW**
 
-## 🚀 Quick Start
+**eTax Mobile PWA** là một Progressive Web App demo clone UI/UX 1:1 từ app gốc, với focus vào mobile-first design và cross-device data synchronization.
 
-```bash
-# Chạy development server
-python3 -m http.server 8080
-
-# Truy cập
-http://127.0.0.1:8080/login.html
-```
-
-## 📁 Cấu trúc dự án
-
-```
-etax-mobile-pwa/
-├── login.html              # Entry point - Trang login
-├── manifest.json           # PWA manifest
-├── service-worker.js       # PWA service worker
-├── favicon.ico             # Favicon
-├── assets/                 # 187 ảnh tối ưu
-├── css/                    # Stylesheets minified
-├── src/                    # Source code
-│   ├── pages/              # 25 trang user + dashboard ( ở đây là index.html ĐĐ Đ bỏ ngay cái tên file dashboard đi 
-│   ├── admin-essential/    # 4 trang admin
-│   └── services/           # JavaScript services
-├── dev/                    # Development tools (3 files)
-├── docs/                   # Documentation
-├── scripts/                # Build scripts
-└── ảnh gốc/               # Reference images
-```
-
-## 🎯 Tính năng
-
-- ✅ **PWA chuẩn** - Installable, offline-first
-- ✅ **Mobile-first** - Tối ưu cho iOS/Android (360px-430px)
-- ✅ **25 trang user** - Clone 100% eTax chính thức
-- ✅ **4 trang admin** - Essential admin tools
-- ✅ **Performance cao** - Critical CSS inline, minified assets
-- ✅ **Native feel** - Touch gestures, haptic feedback
-- ✅ **Admin MST Management** - Quản lý MST, thuế, chứng từ PDF
-- ✅ **PDF Viewer** - iOS-like PDF viewer tích hợp
-- ✅ **Certificate Management** - Upload, trích xuất, quản lý chứng từ
-
-## 🛠️ Development
-
-```bash
-# Chạy server
-./scripts/start-dev-server.sh
-
-# Mobile simulator
-http://127.0.0.1:8080/dev/mobile-simulator.html
-
-# Super dev hub
-http://127.0.0.1:8080/dev/super-dev-hub.html
-```
-
-## 📱 PWA Features
-
-- **Installable** trên mobile/desktop
-- **Offline-first** hoạt động
-- **App shortcuts** - Khai thuế, Nộp thuế, Tra cứu
-- **Splash screen** cho iOS/Android
-- **Push notifications** (sẵn sàng)
-
-## 🎨 Tech Stack
-
-- **Frontend**: HTML5, CSS3, JavaScript ES6+
-- **PWA**: Service Worker, Web App Manifest
-- **Editor**: GrapesJS (Visual), Monaco Editor (Code)
-- **Storage**: localStorage (không cần backend)
-
-## 📊 Performance
-
-- **Lighthouse**: ≥95 điểm mục tiêu
-- **Critical CSS**: Inline cho loading nhanh
-- **Assets**: 187 ảnh tối ưu (WebP + PNG)
-- **Minified**: CSS/JS đã minify
+### **Mục tiêu chính:**
+- ✅ **Clone UI/UX 1:1** từ app gốc (theo screenshot `tra cuu chung tu t.jpg`)
+- ✅ **PWA hoàn chỉnh** với cross-device sync
+- ✅ **Demo project** với dữ liệu mockup
+- ✅ **Mobile-first** responsive design
 
 ---
 
-**📱 eTax Mobile PWA - Demo hoàn chỉnh không cần backend**
+## 🚀 **LIVE URLs**
+
+| Service | URL | Credentials |
+|---------|-----|-------------|
+| **Main App** | `https://anhbao-373f3.web.app` | - |
+| **Login** | `https://anhbao-373f3.web.app/login.html` | MST: `9999999999` / Pass: `firestore123` |
+| **Admin** | `https://anhbao-373f3.web.app/admin.html` | User: `admin` / Pass: `Baoan2022` |
+| **Firebase Console** | `https://console.firebase.google.com/project/anhbao-373f3/overview` | - |
+
+---
+
+## 🏗️ **PROJECT STRUCTURE**
+
+```
+etax-mobile-pwa-main/
+├── 📁 Core Files
+│   ├── admin.html              # Admin panel quản lý MST
+│   ├── admin-login.html        # Login admin
+│   ├── login.html              # Login user chính
+│   ├── firebase.json           # Firebase hosting config
+│   └── manifest.json          # PWA manifest
+├── 📁 src/pages/
+│   ├── index.html              # Trang chủ sau login
+│   ├── tra-cuu-chung-tu.html   # Tra cứu chứng từ
+│   ├── thietlap.html           # Thiết lập cá nhân
+│   └── [other pages...]
+├── 📁 css/                     # Stylesheets
+├── 📁 assets/                  # Images, icons
+├── 📁 ảnh gốc/                 # Reference screenshots
+├── 📁 docs/                    # Documentation
+└── 📁 scripts/
+    ├── firebase-deploy.sh      # Auto deploy script
+    └── deploy.sh              # Netlify deploy script
+```
+
+---
+
+## 🔧 **TECH STACK**
+
+| Technology | Purpose | Status |
+|------------|---------|--------|
+| **HTML5** | Structure | ✅ |
+| **CSS3** | Styling | ✅ |
+| **JavaScript ES6** | Logic | ✅ |
+| **Firebase Firestore** | Database | ✅ |
+| **Firebase Hosting** | Deployment | ✅ |
+| **PWA** | Mobile experience | ✅ |
+| **BroadcastChannel API** | Same-browser sync | ✅ |
+
+---
+
+## 🚀 **QUICK START**
+
+### **1. Deploy to Firebase:**
+```bash
+./firebase-deploy.sh
+```
+
+### **2. Deploy to Netlify (backup):**
+```bash
+./deploy.sh
+```
+
+### **3. Local development:**
+```bash
+# Serve locally
+python -m http.server 8000
+# Or
+npx serve .
+```
+
+---
+
+## 📱 **KEY FEATURES**
+
+### **✅ Authentication System**
+- MST + Password login
+- Admin panel với credentials riêng
+- Session management với localStorage
+
+### **✅ Cross-Device Sync**
+- Firebase Firestore real-time sync
+- BroadcastChannel cho same-browser sync
+- Dual storage: localStorage + Firestore
+
+### **✅ PWA Features**
+- Service Worker
+- Offline support
+- Mobile-first responsive design
+- Native app experience
+
+### **✅ Admin Panel**
+- Tạo/quản lý MST
+- Upload PDF certificates
+- Dashboard với statistics
+- User management
+
+---
+
+## 🔍 **TROUBLESHOOTING**
+
+### **Common Issues:**
+
+1. **Firebase CLI version conflict:**
+   ```bash
+   # Use specific version
+   npx firebase-tools@12.9.1 deploy --only hosting
+   ```
+
+2. **CORS errors:**
+   - Đã fix bằng cách chuyển sang localStorage + Base64
+   - Không cần Firebase Storage nữa
+
+3. **Login không hoạt động:**
+   - Check Firestore connection
+   - Verify MST exists in database
+   - Check localStorage data
+
+---
+
+## 📚 **DOCUMENTATION FILES**
+
+- `docs/ARCHITECTURE.md` - System architecture
+- `docs/API.md` - API documentation  
+- `docs/DEPLOYMENT.md` - Deployment guide
+- `docs/TROUBLESHOOTING.md` - Common issues
+- `docs/DEVELOPMENT.md` - Development workflow
+
+---
+
+## 🎯 **NEXT STEPS**
+
+1. **Performance optimization**
+2. **Add more PWA features**
+3. **Implement offline mode**
+4. **Add push notifications**
+5. **Mobile app store deployment**
+
+---
+
+**Last Updated:** 2025-01-19  
+**Version:** 1.0.0  
+**Status:** ✅ Production Ready
