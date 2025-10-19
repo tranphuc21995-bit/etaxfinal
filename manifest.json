@@ -40,6 +40,13 @@
       "sizes": "390x844",
       "type": "image/png",
       "form_factor": "narrow"
+    },
+    {
+      "src": "assets/index1.png",
+      "sizes": "428x926",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "iPhone 13 Pro Max"
     }
   ],
   "shortcuts": [

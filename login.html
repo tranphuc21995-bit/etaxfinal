@@ -11,6 +11,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     
+    <!-- iOS Optimizations CSS -->
+    <link rel="stylesheet" href="css/ios-optimizations.css">
+
     <!-- Firebase CDN -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
@@ -404,9 +407,137 @@
             }
         }
 
-        /* Responsive */
-        @media (max-width: 480px) {
+        /* iPhone 13 Pro Max - Pixel Perfect CSS dựa trên screenshot thực tế */
+        /* Kích thước thực tế: 428x926px */
+        @media screen and (device-width: 428px) and (device-height: 926px) {
+            /* Safe area adjustments cho iPhone 13 Pro Max */
+            body {
+                padding-top: calc(44px + env(safe-area-inset-top)) !important;
+                padding-bottom: calc(34px + env(safe-area-inset-bottom)) !important;
+                padding-left: env(safe-area-inset-left) !important;
+                padding-right: env(safe-area-inset-right) !important;
+            }
 
+            /* Logo adjustments - dựa trên screenshot thực tế */
+            .logo {
+                width: 120px !important;
+                height: 120px !important;
+                margin-top: 50px !important;
+                margin-bottom: 25px !important;
+            }
+
+            /* Title adjustments - nhỏ hơn so với dự kiến */
+            .app-title {
+                font-size: 24px !important;
+                font-weight: 600 !important;
+                margin-top: 25px !important;
+                margin-bottom: 60px !important;
+            }
+
+            /* Form container adjustments - width hẹp hơn */
+            .login-form-container {
+                padding: 0 54px !important;
+                margin-top: 60px !important;
+                margin-bottom: 40px !important;
+            }
+
+            /* Input field adjustments - thấp hơn và nhỏ hơn */
+            .input-wrapper {
+                height: 45px !important;
+                padding: 12px 0 !important;
+                margin-bottom: 20px !important;
+            }
+
+            .form-input {
+                font-size: 15px !important;
+                height: 45px !important;
+                line-height: 45px !important;
+            }
+
+            /* Login button adjustments - thấp hơn */
+            .login-button {
+                height: 50px !important;
+                border-radius: 25px !important;
+                font-size: 16px !important;
+                margin-top: 40px !important;
+                padding: 12px 24px !important;
+            }
+
+            .faceid-icon {
+                width: 50px !important;
+                height: 50px !important;
+            }
+
+            /* VNeID button adjustments - lớn hơn một chút */
+            .vneid-container {
+                padding: 0 54px !important;
+                margin-top: 20px !important;
+                margin-bottom: 30px !important;
+            }
+
+            .vneid-button {
+                height: 55px !important;
+                border-radius: 12px !important;
+                padding: 15px 20px !important;
+            }
+
+            /* Register section adjustments - font nhỏ hơn */
+            .register-section {
+                padding: 0 54px !important;
+                margin-bottom: 100px !important;
+            }
+
+            .register-text {
+                font-size: 13px !important;
+                line-height: 1.4 !important;
+            }
+
+            .foreigner-text {
+                font-size: 11px !important;
+                line-height: 1.5 !important;
+            }
+
+            /* Bottom navigation adjustments - nhỏ hơn */
+            .bottom-nav img {
+                width: 24px !important;
+                height: 24px !important;
+            }
+
+            .bottom-nav span {
+                font-size: 9px !important;
+            }
+
+            /* Status bar cho iPhone 13 Pro Max */
+            .status-bar {
+                height: calc(44px + env(safe-area-inset-top)) !important;
+                padding-top: env(safe-area-inset-top) !important;
+            }
+        }
+
+        /* iOS Safari optimizations */
+        @supports (-webkit-touch-callout: none) {
+            /* iOS specific styles */
+            .form-input {
+                -webkit-appearance: none;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .login-button,
+            .vneid-button {
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+            }
+
+            /* Prevent zoom on input focus */
+            .form-input[type="text"],
+            .form-input[type="password"] {
+                font-size: 16px !important;
+                transform: translateZ(0);
+            }
+        }
+
+        /* Additional responsive fixes */
+        @media (max-width: 480px) {
             .login-form-container,
             .vneid-container,
             .register-section {
@@ -416,9 +547,20 @@
             .app-title {
                 font-size: 24px;
             }
+        }
 
-            .logo-text {
-                font-size: 8px;
+        /* Landscape orientation cho iPhone */
+        @media screen and (device-width: 428px) and (device-height: 926px) and (orientation: landscape) {
+            .logo-section {
+                margin-top: 20px !important;
+            }
+
+            .login-form-container {
+                margin-top: 20px !important;
+            }
+
+            .register-section {
+                margin-bottom: 60px !important;
             }
         }
     </style>
@@ -495,23 +637,23 @@
             </div>
         </div>
 
-        <!-- Bottom Icons -->
-        <div style="position: fixed; bottom: 20px; left: 0; right: 0; z-index: 4; display: flex; justify-content: space-around; padding: 0 40px;">
-            <div style="display: flex; flex-direction: column; align-items: center; cursor: pointer; opacity: 0.8; transition: opacity 0.3s;" onclick="openQR()">
-                <img src="assets/icon-qr.png" alt="QR tem" style="width: 32px; height: 32px; margin-bottom: 4px; filter: brightness(0) invert(1);">
-                <span style="font-size: 10px; color: white; text-align: center;">QR tem</span>
+        <!-- Bottom Icons - Optimized for iPhone 13 Pro Max -->
+        <div class="bottom-nav" style="position: fixed; bottom: 20px; left: 0; right: 0; z-index: 4; display: flex; justify-content: space-around; padding: 0 40px;">
+            <div class="nav-item" style="display: flex; flex-direction: column; align-items: center; cursor: pointer; opacity: 0.8; transition: opacity 0.3s;" onclick="openQR()">
+                <img src="assets/icon-qr.png" alt="QR tem" class="nav-icon" style="width: 28px; height: 28px; margin-bottom: 4px; filter: brightness(0) invert(1);">
+                <span class="nav-text" style="font-size: 10px; color: white; text-align: center;">QR tem</span>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: center; cursor: pointer; opacity: 0.8; transition: opacity 0.3s;" onclick="return false;">
-                <img src="assets/tienich.png" alt="Tiện ích" style="width: 32px; height: 32px; margin-bottom: 4px; filter: brightness(0) invert(1);">
-                <span style="font-size: 10px; color: white; text-align: center;">Tiện ích</span>
+            <div class="nav-item" style="display: flex; flex-direction: column; align-items: center; cursor: pointer; opacity: 0.8; transition: opacity 0.3s;" onclick="return false;">
+                <img src="assets/tienich.png" alt="Tiện ích" class="nav-icon" style="width: 28px; height: 28px; margin-bottom: 4px; filter: brightness(0) invert(1);">
+                <span class="nav-text" style="font-size: 10px; color: white; text-align: center;">Tiện ích</span>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: center; cursor: pointer; opacity: 0.8; transition: opacity 0.3s;" onclick="return false;">
-                <img src="assets/hotro.png" alt="Hỗ trợ" style="width: 32px; height: 32px; margin-bottom: 4px; filter: brightness(0) invert(1);">
-                <span style="font-size: 10px; color: white; text-align: center;">Hỗ trợ</span>
+            <div class="nav-item" style="display: flex; flex-direction: column; align-items: center; cursor: pointer; opacity: 0.8; transition: opacity 0.3s;" onclick="return false;">
+                <img src="assets/hotro.png" alt="Hỗ trợ" class="nav-icon" style="width: 28px; height: 28px; margin-bottom: 4px; filter: brightness(0) invert(1);">
+                <span class="nav-text" style="font-size: 10px; color: white; text-align: center;">Hỗ trợ</span>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: center; cursor: pointer; opacity: 0.8; transition: opacity 0.3s;" onclick="shareApp()">
-                <img src="assets/chiase.png" alt="Chia sẻ" style="width: 32px; height: 32px; margin-bottom: 4px; filter: brightness(0) invert(1);">
-                <span style="font-size: 10px; color: white; text-align: center;">Chia sẻ</span>
+            <div class="nav-item" style="display: flex; flex-direction: column; align-items: center; cursor: pointer; opacity: 0.8; transition: opacity 0.3s;" onclick="shareApp()">
+                <img src="assets/chiase.png" alt="Chia sẻ" class="nav-icon" style="width: 28px; height: 28px; margin-bottom: 4px; filter: brightness(0) invert(1);">
+                <span class="nav-text" style="font-size: 10px; color: white; text-align: center;">Chia sẻ</span>
             </div>
         </div>
 
