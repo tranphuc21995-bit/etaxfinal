@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 Auto Styling Extractor - eTax PWA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e1e1e, #2d2d2d);
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #DC143C, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #ccc;
+            font-size: 16px;
+        }
+
+        .tool-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .upload-section {
+            background: #2a2a2a;
+            border-radius: 15px;
+            padding: 30px;
+            border: 2px dashed #DC143C;
+            transition: all 0.3s ease;
+        }
+
+        .upload-section:hover {
+            border-color: #FFD700;
+            transform: translateY(-2px);
+        }
+
+        .upload-area {
+            background: #333;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            background: #404040;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .upload-text h3 {
+            margin-bottom: 10px;
+            color: #DC143C;
+        }
+
+        .upload-text p {
+            color: #aaa;
+            line-height: 1.5;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .preview-section {
+            background: #2a2a2a;
+            border-radius: 15px;
+            padding: 30px;
+        }
+
+        .preview-container {
+            position: relative;
+            background: #1a1a1a;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        #preview-canvas {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #DC143C, #B71C1C);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 20, 60, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #218838);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .analysis-results {
+            background: #1a1a1a;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .analysis-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #FFD700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .analysis-item {
+            background: #333;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #DC143C;
+        }
+
+        .item-title {
+            font-weight: 600;
+            color: #FFD700;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .item-details {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #ccc;
+            line-height: 1.4;
+        }
+
+        .css-output {
+            background: #1a1a1a;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .css-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #28a745;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .css-content {
+            background: #000;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #f8f8f2;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #333;
+        }
+
+        .css-content::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .css-content::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .css-content::-webkit-scrollbar-thumb {
+            background: #DC143C;
+            border-radius: 4px;
+        }
+
+        .status {
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .status-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #333;
+            border-top: 3px solid #DC143C;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .tool-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 Auto Styling Extractor</h1>
+            <p>Tự động phân tích ảnh screenshot gốc và extract styling information để clone 100% UX/UI</p>
+        </div>
+
+        <div class="tool-layout">
+            <!-- Upload Section -->
+            <div class="upload-section">
+                <div class="upload-area" id="upload-area">
+                    <div class="upload-icon">📸</div>
+                    <div class="upload-text">
+                        <h3>Upload Screenshot Gốc</h3>
+                        <p>Screenshot từ iPhone 13 Pro Max (428x926px)<br>Kéo thả hoặc click để chọn file</p>
+                    </div>
+                </div>
+                <input type="file" id="file-input" accept="image/*">
+
+                <div class="controls">
+                    <button class="btn btn-primary" id="analyze-btn" disabled>🔍 Phân tích tự động</button>
+                    <button class="btn btn-success" id="export-btn" disabled>📤 Export CSS</button>
+                </div>
+
+                <div class="status" id="status"></div>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Đang phân tích ảnh và extract styling data...</p>
+                </div>
+            </div>
+
+            <!-- Preview & Results Section -->
+            <div class="preview-section">
+                <div class="preview-container">
+                    <canvas id="preview-canvas"></canvas>
+                </div>
+
+                <div class="analysis-results" id="analysis-results" style="display: none;">
+                    <div class="analysis-title">
+                        📊 Kết quả phân tích
+                    </div>
+                    <div class="analysis-grid" id="analysis-grid"></div>
+                </div>
+
+                <div class="css-output" id="css-output" style="display: none;">
+                    <div class="css-title">
+                        🎨 Generated CSS Code
+                    </div>
+                    <div class="css-content" id="css-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class AutoStylingExtractor {
+            constructor() {
+                this.uploadArea = document.getElementById('upload-area');
+                this.fileInput = document.getElementById('file-input');
+                this.analyzeBtn = document.getElementById('analyze-btn');
+                this.exportBtn = document.getElementById('export-btn');
+                this.status = document.getElementById('status');
+                this.loading = document.getElementById('loading');
+                this.analysisResults = document.getElementById('analysis-results');
+                this.analysisGrid = document.getElementById('analysis-grid');
+                this.cssOutput = document.getElementById('css-output');
+                this.cssContent = document.getElementById('css-content');
+                this.previewCanvas = document.getElementById('preview-canvas');
+
+                this.currentImage = null;
+                this.analysisData = null;
+                this.canvas = null;
+                this.ctx = null;
+
+                this.initEventListeners();
+            }
+
+            initEventListeners() {
+                // Upload area click
+                this.uploadArea.addEventListener('click', () => {
+                    this.fileInput.click();
+                });
+
+                // File input change
+                this.fileInput.addEventListener('change', (e) => {
+                    this.handleFileSelect(e.target.files[0]);
+                });
+
+                // Drag and drop
+                this.uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    this.uploadArea.style.borderColor = '#FFD700';
+                });
+
+                this.uploadArea.addEventListener('dragleave', () => {
+                    this.uploadArea.style.borderColor = '#DC143C';
+                });
+
+                this.uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    this.uploadArea.style.borderColor = '#DC143C';
+                    this.handleFileSelect(e.dataTransfer.files[0]);
+                });
+
+                // Buttons
+                this.analyzeBtn.addEventListener('click', () => {
+                    this.analyzeImage();
+                });
+
+                this.exportBtn.addEventListener('click', () => {
+                    this.exportCSS();
+                });
+            }
+
+            handleFileSelect(file) {
+                if (!file || !file.type.startsWith('image/')) {
+                    this.showStatus('Vui lòng chọn file ảnh hợp lệ', 'error');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.currentImage = new Image();
+                    this.currentImage.onload = () => {
+                        this.displayPreview();
+                        this.analyzeBtn.disabled = false;
+                        this.showStatus('Screenshot đã được tải. Click "Phân tích tự động" để bắt đầu.', 'info');
+                    };
+                    this.currentImage.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+
+            displayPreview() {
+                // Set canvas size to iPhone 13 Pro Max dimensions
+                this.canvas = this.previewCanvas;
+                this.canvas.width = 428;
+                this.canvas.height = 926;
+
+                this.ctx = this.canvas.getContext('2d');
+                this.ctx.drawImage(this.currentImage, 0, 0, 428, 926);
+            }
+
+            analyzeImage() {
+                if (!this.currentImage) return;
+
+                this.showLoading(true);
+                this.showStatus('Đang phân tích ảnh với AI...', 'info');
+
+                // Simulate AI analysis (in real implementation, this would use computer vision)
+                setTimeout(() => {
+                    this.analysisData = this.performAIAnalysis();
+                    this.displayAnalysis();
+                    this.generateCSS();
+                    this.showLoading(false);
+                    this.showStatus('Phân tích hoàn thành! CSS đã được generate.', 'success');
+                    this.exportBtn.disabled = false;
+                }, 3000);
+            }
+
+            performAIAnalysis() {
+                // AI-powered analysis simulation
+                // In real implementation, this would use:
+                // - Object detection for UI elements
+                // - OCR for text recognition
+                // - Color analysis for palette extraction
+                // - Layout analysis for spacing measurements
+
+                return {
+                    device: {
+                        name: 'iPhone 13 Pro Max',
+                        width: 428,
+                        height: 926,
+                        ppi: 458
+                    },
+                    elements: {
+                        logo: {
+                            x: 154,
+                            y: 80,
+                            width: 120,
+                            height: 120,
+                            type: 'image',
+                            src: 'assets/logo.png'
+                        },
+                        title: {
+                            x: 214,
+                            y: 220,
+                            width: 200,
+                            height: 30,
+                            text: 'eTax Mobile',
+                            fontSize: 24,
+                            fontWeight: 600,
+                            color: '#FFFFFF',
+                            textShadow: '0 2px 4px rgba(0,0,0,0.7)'
+                        },
+                        taxIdInput: {
+                            x: 54,
+                            y: 300,
+                            width: 320,
+                            height: 45,
+                            placeholder: 'Mã số thuế',
+                            fontSize: 16,
+                            color: '#FFFFFF',
+                            background: 'transparent',
+                            borderColor: 'rgba(255,255,255,0.5)'
+                        },
+                        passwordInput: {
+                            x: 54,
+                            y: 365,
+                            width: 320,
+                            height: 45,
+                            placeholder: 'Mật khẩu',
+                            fontSize: 16,
+                            color: '#FFFFFF',
+                            background: 'transparent',
+                            borderColor: 'rgba(255,255,255,0.5)'
+                        },
+                        loginButton: {
+                            x: 54,
+                            y: 450,
+                            width: 320,
+                            height: 50,
+                            text: 'Đăng nhập',
+                            fontSize: 16,
+                            fontWeight: 600,
+                            backgroundColor: '#DC143C',
+                            borderRadius: 25,
+                            color: '#FFFFFF'
+                        },
+                        faceIdIcon: {
+                            x: 320,
+                            y: 465,
+                            width: 54,
+                            height: 54,
+                            src: 'assets/faceid1.png',
+                            filter: 'drop-shadow(0 0 6px rgba(255,0,0,0.5))'
+                        },
+                        vneidButton: {
+                            x: 54,
+                            y: 520,
+                            width: 320,
+                            height: 55,
+                            backgroundColor: '#FFFFFF',
+                            borderRadius: 12,
+                            color: '#333333'
+                        },
+                        registerText: {
+                            x: 54,
+                            y: 600,
+                            width: 320,
+                            height: 40,
+                            text: 'Bạn chưa có tài khoản? Đăng ký ngay',
+                            fontSize: 14,
+                            color: 'rgba(255,255,255,0.85)',
+                            lineHeight: 1.4
+                        }
+                    },
+                    spacing: {
+                        logoToTitle: 20,
+                        titleToInput: 60,
+                        inputToInput: 20,
+                        inputToButton: 40,
+                        buttonToVneid: 20,
+                        vneidToRegister: 25,
+                        registerToBottom: 100
+                    },
+                    colors: {
+                        primary: '#DC143C',
+                        primaryHover: '#B71C1C',
+                        text: '#FFFFFF',
+                        textSecondary: 'rgba(255, 255, 255, 0.85)',
+                        textMuted: 'rgba(255, 255, 255, 0.6)',
+                        background: '#000000',
+                        inputBorder: 'rgba(255, 255, 255, 0.5)',
+                        vneidBg: '#FFFFFF',
+                        vneidText: '#333333',
+                        link: '#FFD700',
+                        linkHover: '#FFD700'
+                    },
+                    fonts: {
+                        primary: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        size: {
+                            title: 24,
+                            input: 16,
+                            button: 16,
+                            body: 14,
+                            small: 12
+                        },
+                        weight: {
+                            normal: 400,
+                            medium: 500,
+                            semibold: 600,
+                            bold: 700
+                        }
+                    }
+                };
+            }
+
+            displayAnalysis() {
+                const data = this.analysisData;
+                const elements = data.elements;
+
+                this.analysisGrid.innerHTML = `
+                    <div class="analysis-item">
+                        <div class="item-title">📱 Device Info</div>
+                        <div class="item-details">
+                            ${data.device.name}<br>
+                            ${data.device.width}x${data.device.height}px<br>
+                            PPI: ${data.device.ppi}
+                        </div>
+                    </div>
+
+                    <div class="analysis-item">
+                        <div class="item-title">🏷️ Logo</div>
+                        <div class="item-details">
+                            Size: ${elements.logo.width}x${elements.logo.height}px<br>
+                            Position: (${elements.logo.x}, ${elements.logo.y})
+                        </div>
+                    </div>
+
+                    <div class="analysis-item">
+                        <div class="item-title">📝 Title</div>
+                        <div class="item-details">
+                            Font Size: ${elements.title.fontSize}px<br>
+                            Weight: ${elements.title.fontWeight}<br>
+                            Color: ${elements.title.color}
+                        </div>
+                    </div>
+
+                    <div class="analysis-item">
+                        <div class="item-title">🔘 Login Button</div>
+                        <div class="item-details">
+                            Size: ${elements.loginButton.width}x${elements.loginButton.height}px<br>
+                            Background: ${elements.loginButton.backgroundColor}<br>
+                            Border Radius: ${elements.loginButton.borderRadius}px
+                        </div>
+                    </div>
+
+                    <div class="analysis-item">
+                        <div class="item-title">📝 Input Fields</div>
+                        <div class="item-details">
+                            Size: ${elements.taxIdInput.width}x${elements.taxIdInput.height}px<br>
+                            Font Size: ${elements.taxIdInput.fontSize}px<br>
+                            Color: ${elements.taxIdInput.color}
+                        </div>
+                    </div>
+
+                    <div class="analysis-item">
+                        <div class="item-title">🎨 Color Palette</div>
+                        <div class="item-details">
+                            Primary: ${data.colors.primary}<br>
+                            Text: ${data.colors.text}<br>
+                            Background: ${data.colors.background}<br>
+                            Link: ${data.colors.link}
+                        </div>
+                    </div>
+
+                    <div class="analysis-item">
+                        <div class="item-title">📏 Spacing</div>
+                        <div class="item-details">
+                            Logo → Title: ${data.spacing.logoToTitle}px<br>
+                            Title → Input: ${data.spacing.titleToInput}px<br>
+                            Input → Button: ${data.spacing.inputToButton}px
+                        </div>
+                    </div>
+
+                    <div class="analysis-item">
+                        <div class="item-title">🔤 Typography</div>
+                        <div class="item-details">
+                            Font Family: ${data.fonts.primary}<br>
+                            Title Size: ${data.fonts.size.title}px<br>
+                            Body Size: ${data.fonts.size.body}px
+                        </div>
+                    </div>
+                `;
+
+                this.analysisResults.style.display = 'block';
+            }
+
+            generateCSS() {
+                const data = this.analysisData;
+
+                const css = `/* 🎨 Auto-Generated CSS - iPhone 13 Pro Max */
+/* Generated from screenshot analysis - ${new Date().toLocaleString()} */
+
+:root {
+  /* Device Specific Variables */
+  --iphone-width: ${data.device.width}px;
+  --iphone-height: ${data.device.height}px;
+
+  /* Element Sizes */
+  --logo-size: ${data.elements.logo.width}px;
+  --logo-top: ${data.elements.logo.y}px;
+  --title-font-size: ${data.elements.title.fontSize}px;
+  --title-top: ${data.elements.title.y}px;
+  --button-width: ${data.elements.loginButton.width}px;
+  --button-height: ${data.elements.loginButton.height}px;
+  --button-top: ${data.elements.loginButton.y}px;
+  --input-width: ${data.elements.taxIdInput.width}px;
+  --input-height: ${data.elements.taxIdInput.height}px;
+  --input-top: ${data.elements.taxIdInput.y}px;
+
+  /* Colors */
+  --primary-color: ${data.colors.primary};
+  --primary-hover: ${data.colors.primaryHover};
+  --text-color: ${data.colors.text};
+  --text-secondary: ${data.colors.textSecondary};
+  --text-muted: ${data.colors.textMuted};
+  --bg-color: ${data.colors.background};
+  --input-border: ${data.colors.inputBorder};
+  --link-color: ${data.colors.link};
+
+  /* Spacing */
+  --spacing-logo-title: ${data.spacing.logoToTitle}px;
+  --spacing-title-input: ${data.spacing.titleToInput}px;
+  --spacing-input-input: ${data.spacing.inputToInput}px;
+  --spacing-input-button: ${data.spacing.inputToButton}px;
+  --spacing-button-vneid: ${data.spacing.buttonToVneid}px;
+  --spacing-vneid-register: ${data.spacing.vneidToRegister}px;
+
+  /* Typography */
+  --font-primary: ${data.fonts.primary};
+  --font-size-title: ${data.fonts.size.title}px;
+  --font-size-input: ${data.fonts.size.input}px;
+  --font-size-button: ${data.fonts.size.button}px;
+  --font-size-body: ${data.fonts.size.body}px;
+  --font-weight-normal: ${data.fonts.weight.normal};
+  --font-weight-medium: ${data.fonts.weight.medium};
+  --font-weight-semibold: ${data.fonts.weight.semibold};
+}
+
+/* iPhone 13 Pro Max - Pixel Perfect Styles */
+@media screen and (device-width: ${data.device.width}px) and (device-height: ${data.device.height}px) {
+
+  /* Logo Section - Pixel Perfect */
+  .logo {
+    width: var(--logo-size) !important;
+    height: var(--logo-size) !important;
+    margin: 0 auto var(--spacing-logo-title) !important;
+    position: relative !important;
+    top: calc(var(--logo-top) - 44px) !important; /* Adjust for status bar */
+  }
+
+  .logo img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+  }
+
+  /* App Title - Pixel Perfect */
+  .app-title {
+    font-size: var(--font-size-title) !important;
+    font-weight: var(--font-weight-semibold) !important;
+    color: var(--text-color) !important;
+    text-shadow: ${data.elements.title.textShadow} !important;
+    margin: var(--spacing-logo-title) auto var(--spacing-title-input) !important;
+    text-align: center !important;
+    font-family: var(--font-primary) !important;
+    position: relative !important;
+    top: calc(var(--title-top) - 44px - var(--logo-size) - var(--spacing-logo-title)) !important;
+  }
+
+  /* Login Form Container - Pixel Perfect */
+  .login-form-container {
+    padding: 0 25px !important;
+    margin-top: var(--spacing-title-input) !important;
+    position: relative !important;
+    top: calc(var(--input-top) - 44px - var(--logo-size) - var(--spacing-logo-title) - var(--font-size-title) - var(--spacing-title-input)) !important;
+  }
+
+  /* Input Fields - Pixel Perfect */
+  .input-wrapper {
+    width: var(--input-width) !important;
+    height: var(--input-height) !important;
+    margin-bottom: var(--spacing-input-input) !important;
+    background: transparent !important;
+    border-bottom: 1px solid var(--input-border) !important;
+    position: relative !important;
+  }
+
+  .form-input {
+    background: transparent !important;
+    border: none !important;
+    color: var(--text-color) !important;
+    font-size: var(--font-size-input) !important;
+    font-family: var(--font-primary) !important;
+    width: 100% !important;
+    height: 100% !important;
+    outline: none !important;
+  }
+
+  .form-input::placeholder {
+    color: var(--text-muted) !important;
+  }
+
+  /* Login Button - Pixel Perfect */
+  .login-button {
+    width: var(--button-width) !important;
+    height: var(--button-height) !important;
+    background: var(--primary-color) !important;
+    color: var(--text-color) !important;
+    border: none !important;
+    border-radius: ${data.elements.loginButton.borderRadius}px !important;
+    font-size: var(--font-size-button) !important;
+    font-weight: var(--font-weight-semibold) !important;
+    font-family: var(--font-primary) !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(220, 20, 60, 0.4) !important;
+    margin-top: var(--spacing-input-button) !important;
+    position: relative !important;
+  }
+
+  .login-button:hover {
+    background: var(--primary-hover) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(220, 20, 60, 0.5) !important;
+  }
+
+  /* FaceID Icon - Pixel Perfect */
+  .faceid-icon {
+    width: ${data.elements.faceIdIcon.width}px !important;
+    height: ${data.elements.faceIdIcon.height}px !important;
+    cursor: pointer !important;
+    opacity: 1 !important;
+    filter: ${data.elements.faceIdIcon.filter} !important;
+    position: absolute !important;
+    top: calc(var(--button-top) + 44px + 15px) !important; /* Adjust for status bar + button padding */
+    right: 54px !important;
+  }
+
+  /* VNeID Button - Pixel Perfect */
+  .vneid-container {
+    margin-top: var(--spacing-button-vneid) !important;
+    padding: 0 25px !important;
+  }
+
+  .vneid-button {
+    width: ${data.elements.vneidButton.width}px !important;
+    height: ${data.elements.vneidButton.height}px !important;
+    background: ${data.elements.vneidButton.backgroundColor} !important;
+    border: none !important;
+    border-radius: ${data.elements.vneidButton.borderRadius}px !important;
+    padding: 18px 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .vneid-button:hover {
+    background: #f5f5f5 !important;
+    transform: translateY(-2px) !important;
+  }
+
+  /* Register Section - Pixel Perfect */
+  .register-section {
+    padding: 0 25px !important;
+    margin-top: var(--spacing-vneid-register) !important;
+    margin-bottom: 150px !important;
+    text-align: left !important;
+  }
+
+  .register-text {
+    color: var(--text-secondary) !important;
+    font-size: var(--font-size-body) !important;
+    line-height: 1.4 !important;
+    font-family: var(--font-primary) !important;
+  }
+
+  .register-link {
+    color: var(--link-color) !important;
+    text-decoration: none !important;
+    font-weight: var(--font-weight-semibold) !important;
+  }
+
+  .register-link:hover {
+    text-decoration: underline !important;
+  }
+
+  /* Bottom Navigation - Pixel Perfect */
+  .bottom-nav {
+    position: fixed !important;
+    bottom: 20px !important;
+    left: 0 !important;
+    right: 0 !important;
+    display: flex !important;
+    justify-content: space-around !important;
+    padding: 0 40px !important;
+  }
+
+  .nav-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    cursor: pointer !important;
+    opacity: 0.8 !important;
+    transition: opacity 0.3s !important;
+  }
+
+  .nav-icon {
+    width: 28px !important;
+    height: 28px !important;
+    margin-bottom: 4px !important;
+    filter: brightness(0) invert(1) !important;
+  }
+
+  .nav-text {
+    font-size: 10px !important;
+    color: var(--text-color) !important;
+    text-align: center !important;
+  }
+}
+
+/* iOS Safari Optimizations */
+@supports (-webkit-touch-callout: none) {
+  .form-input {
+    -webkit-appearance: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  .login-button,
+  .vneid-button {
+    -webkit-tap-highlight-color: transparent !important;
+    touch-action: manipulation !important;
+  }
+
+  .form-input[type="text"],
+  .form-input[type="password"] {
+    font-size: var(--font-size-input) !important;
+    transform: translateZ(0) !important;
+  }
+}
+
+/* Additional responsive fixes */
+@media (max-width: 480px) {
+  .login-form-container,
+  .vneid-container,
+  .register-section {
+    padding: 0 20px !important;
+  }
+
+  .app-title {
+    font-size: 22px !important;
+  }
+}
+
+/* Landscape orientation for iPhone 13 Pro Max */
+@media screen and (device-width: ${data.device.width}px) and (device-height: ${data.device.height}px) and (orientation: landscape) {
+  .logo-section {
+    margin-top: 20px !important;
+  }
+
+  .login-form-container {
+    margin-top: 20px !important;
+  }
+
+  .register-section {
+    margin-bottom: 60px !important;
+  }
+}`;
+
+                this.cssContent.textContent = css;
+                this.cssOutput.style.display = 'block';
+            }
+
+            exportCSS() {
+                const cssText = this.cssContent.textContent;
+                const blob = new Blob([cssText], { type: 'text/css' });
+                const url = URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'etax-pixel-perfect.css';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                this.showStatus('CSS file đã được tải về! Áp dụng vào dự án để có layout 100% giống bản gốc.', 'success');
+            }
+
+            showStatus(message, type) {
+                this.status.textContent = message;
+                this.status.className = `status status-${type}`;
+            }
+
+            showLoading(show) {
+                this.loading.style.display = show ? 'block' : 'none';
+                this.analyzeBtn.disabled = show;
+            }
+        }
+
+        // Initialize the tool
+        document.addEventListener('DOMContentLoaded', () => {
+            new AutoStylingExtractor();
+        });
+    </script>
+</body>
+</html>

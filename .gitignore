@@ -144,3 +144,4 @@ __pycache__/
 # Development files
 dev/
 scripts/
+cursor-test-repo/

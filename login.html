@@ -10,653 +10,95 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
-    
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+
     <!-- iOS Optimizations CSS -->
     <link rel="stylesheet" href="css/ios-optimizations.css">
+
+    <!-- Clone layout styles -->
+    <link rel="stylesheet" href="css/login-clone.css">
 
     <!-- Firebase CDN -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html, body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #000;
-            color: white;
-            height: 100vh;
-            width: 100vw;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            position: relative;
-            /* ✅ LOẠI BỎ VIEWPORT HOÀN TOÀN */
-            padding-top: 0 !important;
-            padding-bottom: 0 !important;
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-        }
-
-        /* Background Image - Full Screen */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: url('assets/bglogin.png') no-repeat center center;
-            background-size: cover;
-            background-attachment: fixed;
-            background-color: #000;
-            opacity: 1;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* Central Emblem - Quốc huy mờ phía sau */
-        .central-emblem {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 2;
-            opacity: 0.08;
-            width: 350px;
-            /* Kích thước lớn hơn */
-            height: 350px;
-            background: url('assets/logo.png') no-repeat center center;
-            /* Sử dụng logo.png */
-            background-size: contain;
-        }
-
-        .emblem-circle,
-        .emblem-star,
-        .emblem-star::before,
-        .emblem-star::after {
-            display: none;
-            /* Ẩn các phần tử CSS tạo emblem cũ */
-        }
-
-        .app-container {
-            position: relative;
-            z-index: 3;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Status Bar */
-        .status-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 44px;
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-            z-index: 1000;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .status-left {
-            display: flex;
-            align-items: center;
-        }
-
-        .status-right {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-
-        .status-icon {
-            width: 18px;
-            height: 12px;
-            background: white;
-            border-radius: 2px;
-            position: relative;
-        }
-
-        .status-icon::after {
-            content: '';
-            position: absolute;
-            right: -8px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 3px;
-            height: 6px;
-            background: white;
-            border-radius: 1px;
-        }
-
-        /* Logo Section */
-        .logo-section {
-            position: relative;
-            z-index: 4;
-            text-align: center;
-            margin-top: 70px;
-            margin-bottom: 40px;
-        }
-
-        .logo {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 15px;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-
-        .app-title {
-            font-size: 28px;
-            font-weight: 700;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
-            margin-top: 10px;
-        }
-
-        /* Login Form */
-        .login-form-container {
-            position: relative;
-            z-index: 4;
-            padding: 0 25px;
-            margin-bottom: 25px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .input-wrapper {
-            position: relative;
-            background: transparent;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-            padding: 15px 0;
-            display: flex;
-            align-items: center;
-        }
-
-        .input-icon {
-            width: 20px;
-            height: 20px;
-            margin-right: 15px;
-            filter: brightness(0) invert(0.6);
-        }
-
-        .form-input {
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 16px;
-            flex: 1;
-            outline: none;
-        }
-
-        .form-input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .password-toggle {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            margin-left: 15px;
-            filter: brightness(0) invert(0.6);
-        }
-
-        .forgot-links {
-            text-align: right;
-            margin-bottom: 25px;
-        }
-
-        .forgot-link {
-            color: #FFD700;
-            text-decoration: none;
-            font-size: 14px;
-            margin-left: 15px;
-        }
-
-        .forgot-link:hover {
-            text-decoration: underline;
-        }
-
-        .login-button-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-top: 25px;
-        }
-
-        .login-button {
-            background: #DC143C;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 25px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            flex: 1;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(220, 20, 60, 0.4);
-        }
-
-        .login-button:hover {
-            background: #B71C1C;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(220, 20, 60, 0.5);
-        }
-
-        .faceid-icon {
-            width: 54px;
-            /* gần bằng chiều cao nút để cân đối */
-            height: 54px;
-            cursor: pointer;
-            opacity: 1;
-            /* Giữ màu đỏ gốc của icon, thêm glow nhẹ để nổi trên nền tối */
-            filter: drop-shadow(0 0 6px rgba(255, 0, 0, 0.5));
-        }
-
-        /* VNeID Button */
-        .vneid-container {
-            position: relative;
-            z-index: 4;
-            padding: 0 25px;
-            margin-top: 20px;
-            margin-bottom: 30px;
-        }
-
-        .vneid-button {
-            width: 100%;
-            background: white;
-            border: none;
-            border-radius: 12px;
-            padding: 18px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .vneid-button:hover {
-            background: #f5f5f5;
-            transform: translateY(-2px);
-        }
-
-        .vneid-text {
-            color: #333;
-            text-align: left;
-            flex: 1;
-        }
-
-        .vneid-text .line1 {
-            font-size: 15px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 2px;
-        }
-
-        .vneid-text .line2 {
-            font-size: 14px;
-            font-weight: 500;
-            color: #666;
-            text-align: center;
-        }
-
-        .vneid-icon {
-            width: 48px;
-            height: 48px;
-            flex-shrink: 0;
-        }
-
-        /* Register Section */
-        .register-section {
-            position: relative;
-            z-index: 4;
-            text-align: center;
-            padding: 0 25px;
-            margin-bottom: 150px;
-        }
-
-        .register-text {
-            color: rgba(255, 255, 255, 0.85);
-            margin-bottom: 15px;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
-        .register-link {
-            color: #FFD700;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .register-link:hover {
-            text-decoration: underline;
-        }
-
-        .foreigner-text {
-            color: rgba(255, 255, 255, 0.85);
-            font-size: 12px;
-            line-height: 1.6;
-            margin-top: 15px;
-            padding: 0 10px;
-        }
-
-        .foreigner-link {
-            color: #FFD700;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .foreigner-link:hover {
-            text-decoration: underline;
-        }
-
-
-
-        /* Error Message */
-        .error-message {
-            background: rgba(220, 53, 69, 0.9);
-            color: white;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            display: none;
-            font-size: 14px;
-        }
-
-        /* Animations */
-        .fade-in {
-            animation: fadeIn 0.8s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* iPhone 13 Pro Max - Pixel Perfect CSS dựa trên screenshot thực tế */
-        /* Kích thước thực tế: 428x926px */
-        @media screen and (device-width: 428px) and (device-height: 926px) {
-            /* Safe area adjustments cho iPhone 13 Pro Max */
-            body {
-                padding-top: calc(44px + env(safe-area-inset-top)) !important;
-                padding-bottom: calc(34px + env(safe-area-inset-bottom)) !important;
-                padding-left: env(safe-area-inset-left) !important;
-                padding-right: env(safe-area-inset-right) !important;
-            }
-
-            /* Logo adjustments - dựa trên screenshot thực tế */
-            .logo {
-                width: 120px !important;
-                height: 120px !important;
-                margin-top: 50px !important;
-                margin-bottom: 25px !important;
-            }
-
-            /* Title adjustments - nhỏ hơn so với dự kiến */
-            .app-title {
-                font-size: 24px !important;
-                font-weight: 600 !important;
-                margin-top: 25px !important;
-                margin-bottom: 60px !important;
-            }
-
-            /* Form container adjustments - width hẹp hơn */
-            .login-form-container {
-                padding: 0 54px !important;
-                margin-top: 60px !important;
-                margin-bottom: 40px !important;
-            }
-
-            /* Input field adjustments - thấp hơn và nhỏ hơn */
-            .input-wrapper {
-                height: 45px !important;
-                padding: 12px 0 !important;
-                margin-bottom: 20px !important;
-            }
-
-            .form-input {
-                font-size: 15px !important;
-                height: 45px !important;
-                line-height: 45px !important;
-            }
-
-            /* Login button adjustments - thấp hơn */
-            .login-button {
-                height: 50px !important;
-                border-radius: 25px !important;
-                font-size: 16px !important;
-                margin-top: 40px !important;
-                padding: 12px 24px !important;
-            }
-
-            .faceid-icon {
-                width: 50px !important;
-                height: 50px !important;
-            }
-
-            /* VNeID button adjustments - lớn hơn một chút */
-            .vneid-container {
-                padding: 0 54px !important;
-                margin-top: 20px !important;
-                margin-bottom: 30px !important;
-            }
-
-            .vneid-button {
-                height: 55px !important;
-                border-radius: 12px !important;
-                padding: 15px 20px !important;
-            }
-
-            /* Register section adjustments - font nhỏ hơn */
-            .register-section {
-                padding: 0 54px !important;
-                margin-bottom: 100px !important;
-            }
-
-            .register-text {
-                font-size: 13px !important;
-                line-height: 1.4 !important;
-            }
-
-            .foreigner-text {
-                font-size: 11px !important;
-                line-height: 1.5 !important;
-            }
-
-            /* Bottom navigation adjustments - nhỏ hơn */
-            .bottom-nav img {
-                width: 24px !important;
-                height: 24px !important;
-            }
-
-            .bottom-nav span {
-                font-size: 9px !important;
-            }
-
-            /* Status bar cho iPhone 13 Pro Max */
-            .status-bar {
-                height: calc(44px + env(safe-area-inset-top)) !important;
-                padding-top: env(safe-area-inset-top) !important;
-            }
-        }
-
-        /* iOS Safari optimizations */
-        @supports (-webkit-touch-callout: none) {
-            /* iOS specific styles */
-            .form-input {
-                -webkit-appearance: none;
-                -webkit-tap-highlight-color: transparent;
-            }
-
-            .login-button,
-            .vneid-button {
-                -webkit-tap-highlight-color: transparent;
-                touch-action: manipulation;
-            }
-
-            /* Prevent zoom on input focus */
-            .form-input[type="text"],
-            .form-input[type="password"] {
-                font-size: 16px !important;
-                transform: translateZ(0);
-            }
-        }
-
-        /* Additional responsive fixes */
-        @media (max-width: 480px) {
-            .login-form-container,
-            .vneid-container,
-            .register-section {
-                padding: 0 20px;
-            }
-
-            .app-title {
-                font-size: 24px;
-            }
-        }
-
-        /* Landscape orientation cho iPhone */
-        @media screen and (device-width: 428px) and (device-height: 926px) and (orientation: landscape) {
-            .logo-section {
-                margin-top: 20px !important;
-            }
-
-            .login-form-container {
-                margin-top: 20px !important;
-            }
-
-            .register-section {
-                margin-bottom: 60px !important;
-            }
-        }
-    </style>
 </head>
 
 <body>
-    <div class="app-container">
-        <!-- Central Emblem -->
-        <div class="central-emblem"></div>
 
-
-
-        <!-- Logo Section -->
-        <div class="logo-section fade-in">
-            <div class="logo">
-                <img src="assets/logo.png" alt="THUẾ NHÀ NƯỚC">
+    <main class="screen">
+        <section class="brand">
+            <div class="logo-circle">
+                <img src="assets/logo.webp" alt="Logo Thuế Nhà Nước">
             </div>
-            <h1 class="app-title">eTax Mobile</h1>
-        </div>
+            <h1>eTax Mobile</h1>
+        </section>
 
-        <!-- Login Form -->
-        <div class="login-form-container fade-in">
-            <form id="loginForm">
-                <div class="error-message" id="errorMsg"></div>
+        <form id="loginForm" class="login-form">
+            <div class="error-message" id="errorMsg"></div>
 
-                <div class="form-group">
-                    <div class="input-wrapper">
-                        <img src="assets/avatar.png" alt="User" class="input-icon">
-                        <input type="text" id="taxId" class="form-input" placeholder="Mã số thuế"
-                            autocomplete="username">
-                    </div>
+            <div class="field">
+                <label for="taxId" class="field-label">Mã số thuế</label>
+                <div class="field-input">
+                    <img src="assets/icon-mst-new.svg" alt="Mã số thuế">
+                    <input type="text" id="taxId" class="form-input" autocomplete="username">
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <div class="input-wrapper">
-                        <img src="assets/icon-doimk.png" alt="Lock" class="input-icon">
-                        <input type="password" id="password" class="form-input" placeholder="Mật khẩu"
-                            autocomplete="current-password">
-                        <img src="assets/icon-change.png" alt="Eye" class="password-toggle" id="togglePassword">
-                    </div>
+            <div class="field">
+                <label for="password" class="field-label">Mật khẩu</label>
+                <div class="field-input">
+                    <img src="assets/icon-password-new.svg" alt="Mật khẩu">
+                    <input type="password" id="password" class="form-input" autocomplete="current-password">
+                    <img src="assets/icon-change.png" alt="Ẩn/hiện mật khẩu" class="toggle" id="togglePassword">
                 </div>
+            </div>
 
-                <div class="forgot-links">
-                    <a href="#" class="forgot-link" onclick="return false;">Quên tài khoản (mã số thuế)?</a>
-                    <a href="#" class="forgot-link" onclick="return false;">Quên mật khẩu ?</a>
-                </div>
+            <div class="helper-links">
+                <a href="#" onclick="return false;">Quên tài khoản (mã số thuế)?</a>
+                <a href="#" onclick="return false;">Quên mật khẩu ?</a>
+            </div>
 
-                <div class="login-button-container">
-                    <button type="submit" class="login-button" id="loginBtn">Đăng nhập</button>
-                    <img src="assets/faceid.png" alt="FaceID" class="faceid-icon">
-                </div>
-            </form>
-        </div>
+            <div class="action-row">
+                <button type="submit" class="btn-primary" id="loginBtn">Đăng nhập</button>
+                <img src="assets/faceid1.png" alt="FaceID" class="faceid">
+            </div>
+        </form>
 
-        <!-- VNeID Button -->
-        <div class="vneid-container fade-in">
+        <section class="vneid">
             <button class="vneid-button" id="vneidBtn">
-                <div class="vneid-text">
-                    <div class="line1">Đăng nhập bằng tài khoản</div>
-                    <div class="line2">Định danh điện tử</div>
-                </div>
-                <img src="assets/vnid.png" alt="VNeID" class="vneid-icon">
+                <span class="vneid-text">Đăng nhập bằng tài khoản<br>Định danh điện tử</span>
+                <img src="assets/vnid.png" alt="VNeID">
             </button>
-        </div>
+        </section>
 
-        <!-- Register Section -->
-        <div class="register-section fade-in">
-            <div class="register-text">
-                Bạn chưa có tài khoản? <a href="#" class="register-link" onclick="return false;">Đăng ký ngay</a>
-            </div>
-            <div class="foreigner-text">
-                Người nước ngoài hoặc người Việt Nam sống ở nước ngoài không có số định danh cá nhân chưa có mã số thuế?
-                <a href="#" class="foreigner-link" onclick="return false;">Đăng ký thuế ngay.</a>
-            </div>
-        </div>
+            <section class="register">
+                <p>Bạn chưa có tài khoản? <a href="#" class="highlight" onclick="return false;">Đăng ký ngay</a></p>
+                <p class="foreign">Người nước ngoài hoặc người Việt Nam sống ở nước ngoài không có số định danh cá nhân chưa có mã số thuế? <a href="#" class="highlight" onclick="return false;">Đăng ký thuế ngay.</a></p>
+            </section>
+    </main>
 
-        <!-- Bottom Icons - Optimized for iPhone 13 Pro Max -->
-        <div class="bottom-nav" style="position: fixed; bottom: 20px; left: 0; right: 0; z-index: 4; display: flex; justify-content: space-around; padding: 0 40px;">
-            <div class="nav-item" style="display: flex; flex-direction: column; align-items: center; cursor: pointer; opacity: 0.8; transition: opacity 0.3s;" onclick="openQR()">
-                <img src="assets/icon-qr.png" alt="QR tem" class="nav-icon" style="width: 28px; height: 28px; margin-bottom: 4px; filter: brightness(0) invert(1);">
-                <span class="nav-text" style="font-size: 10px; color: white; text-align: center;">QR tem</span>
-            </div>
-            <div class="nav-item" style="display: flex; flex-direction: column; align-items: center; cursor: pointer; opacity: 0.8; transition: opacity 0.3s;" onclick="return false;">
-                <img src="assets/tienich.png" alt="Tiện ích" class="nav-icon" style="width: 28px; height: 28px; margin-bottom: 4px; filter: brightness(0) invert(1);">
-                <span class="nav-text" style="font-size: 10px; color: white; text-align: center;">Tiện ích</span>
-            </div>
-            <div class="nav-item" style="display: flex; flex-direction: column; align-items: center; cursor: pointer; opacity: 0.8; transition: opacity 0.3s;" onclick="return false;">
-                <img src="assets/hotro.png" alt="Hỗ trợ" class="nav-icon" style="width: 28px; height: 28px; margin-bottom: 4px; filter: brightness(0) invert(1);">
-                <span class="nav-text" style="font-size: 10px; color: white; text-align: center;">Hỗ trợ</span>
-            </div>
-            <div class="nav-item" style="display: flex; flex-direction: column; align-items: center; cursor: pointer; opacity: 0.8; transition: opacity 0.3s;" onclick="shareApp()">
-                <img src="assets/chiase.png" alt="Chia sẻ" class="nav-icon" style="width: 28px; height: 28px; margin-bottom: 4px; filter: brightness(0) invert(1);">
-                <span class="nav-text" style="font-size: 10px; color: white; text-align: center;">Chia sẻ</span>
-            </div>
-        </div>
+    <footer class="nav-bar">
+        <a href="#" class="nav-item" onclick="openQR()">
+            <img src="assets/icon-qr.png" alt="QR tem">
+            <span>QR tem</span>
+        </a>
+        <a href="#" class="nav-item" onclick="return false;">
+            <img src="assets/tienich.png" alt="Tiện ích">
+            <span>Tiện ích</span>
+        </a>
+        <a href="#" class="nav-item" onclick="return false;">
+            <img src="assets/hotro.png" alt="Hỗ trợ">
+            <span>Hỗ trợ</span>
+        </a>
+        <a href="#" class="nav-item" onclick="shareApp()">
+            <img src="assets/chiase.png" alt="Chia sẻ">
+            <span>Chia sẻ</span>
+        </a>
+    </footer>
 
+    <div class="background">
+        <img src="assets/bglogin.png" alt="Background">
     </div>
 
     <script src="src/admin-essential/mock-data-generator.js"></script>

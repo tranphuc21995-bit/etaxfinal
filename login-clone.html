@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>eTax Mobile - Đăng nhập</title>
+    <link rel="stylesheet" href="css/login-clone.css">
+</head>
+<body>
+    <div class="status-bar">
+        <div class="status-time">10:26</div>
+        <div class="status-icons">
+            <div class="signal-bars" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="wifi-icon" aria-hidden="true"></div>
+            <div class="battery" aria-hidden="true">
+                <span class="battery-percent">89</span>
+                <div class="battery-body">
+                    <div class="battery-level"></div>
+                </div>
+                <div class="battery-cap"></div>
+            </div>
+        </div>
+    </div>
+
+    <main class="screen">
+        <section class="brand">
+            <div class="logo-circle">
+                <img src="assets/logo.png" alt="Logo Thuế Nhà Nước">
+            </div>
+            <h1>eTax Mobile</h1>
+        </section>
+
+        <form class="login-form">
+            <div class="field">
+                <label for="taxId" class="field-label">Mã số thuế</label>
+                <div class="field-input">
+                    <img src="assets/icon-mst-new.svg" alt="Mã số thuế">
+                    <input id="taxId" type="text" placeholder="Vui lòng nhập tài khoản">
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="password" class="field-label">Mật khẩu</label>
+                <div class="field-input">
+                    <img src="assets/icon-password-new.svg" alt="Mật khẩu">
+                    <input id="password" type="password" placeholder="">
+                    <img src="assets/icon-change.png" alt="Ẩn/hiện mật khẩu" class="toggle">
+                </div>
+            </div>
+
+            <div class="helper-links">
+                <a href="#">Quên tài khoản (mã số thuế)?</a>
+                <a href="#">Quên mật khẩu ?</a>
+            </div>
+
+            <div class="action-row">
+                <button type="button" class="btn-primary">Đăng nhập</button>
+                <img src="assets/faceid1.png" alt="FaceID" class="faceid">
+            </div>
+        </form>
+
+        <section class="vneid">        
+            <button class="vneid-button">
+                <span class="vneid-text">Đăng nhập bằng tài khoản<br>Định danh điện tử</span>
+                <img src="assets/vnid.png" alt="VNeID">
+            </button>
+        </section>
+
+        <section class="register">
+            <p>Bạn chưa có tài khoản? <a href="#" class="highlight">Đăng ký ngay</a></p>
+            <p class="foreign">Người nước ngoài hoặc người Việt Nam sống ở nước ngoài không có số định danh cá nhân chưa có mã số thuế? <a href="#" class="highlight">Đăng ký thuế ngay.</a></p>
+        </section>
+    </main>
+
+    <footer class="nav-bar">
+        <a href="#" class="nav-item">
+            <img src="assets/icon-qr.png" alt="QR tem">
+            <span>QR tem</span>
+        </a>
+        <a href="#" class="nav-item">
+            <img src="assets/tienich.png" alt="Tiện ích">
+            <span>Tiện ích</span>
+        </a>
+        <a href="#" class="nav-item">
+            <img src="assets/hotro.png" alt="Hỗ trợ">
+            <span>Hỗ trợ</span>
+        </a>
+        <a href="#" class="nav-item">
+            <img src="assets/chiase.png" alt="Chia sẻ">
+            <span>Chia sẻ</span>
+        </a>
+    </footer>
+
+    <div class="background">
+        <img src="assets/bglogin.png" alt="Background">
+        <div class="hero"></div>
+    </div>
+</body>
+</html>
+

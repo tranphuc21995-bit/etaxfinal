@@ -1,4 +1,4 @@
-const CACHE_NAME = 'etax-mobile-v1.1.0';
+const CACHE_NAME = 'etax-mobile-v1.3.0';
 const RUNTIME_IMG_CACHE = 'etax-img-v1';
 const RUNTIME_FONT_CACHE = 'etax-font-v1';
 const RUNTIME_CSS_CACHE = 'etax-css-v1';
@@ -12,6 +12,7 @@ const urlsToCache = [
   // CSS used on entry pages
   '/css/home.css',
   '/css/login-original.css',
+  '/css/login-clone.css',
   '/css/user-interface-manager.css',
   // Core assets
   '/assets/logo.png',
