@@ -1914,14 +1914,18 @@
             certificateList.innerHTML = certificates.map(cert => `
                 <div class="certificate-item">
                     <div class="certificate-item-info">
-                        <div class="certificate-item-title">${cert.referenceNumber}</div>
+                        <div class="certificate-item-title">${cert.referenceNumber || 'Chưa có mã tham chiếu'}</div>
                         <div class="certificate-item-details">
                             Số tiền: ${formatCurrency(cert.amount)} | 
                             Ngày: ${formatDate(cert.paymentDate)} | 
-                            Trạng thái: ${cert.status}
+                            Trạng thái: ${cert.status}<br>
+                            <small style="color: #666;">File: ${cert.fileName || 'N/A'} (${formatFileSize(cert.fileSize || 0)})</small>
                         </div>
                     </div>
                     <div class="certificate-item-actions">
+                        <button class="btn btn-success" onclick="downloadCertificate('${cert.id}', '${mst}')" style="margin-right: 8px;">
+                            <i class="fas fa-download"></i> Tải
+                        </button>
                         <button class="btn-delete-certificate" onclick="deleteCertificate('${cert.id}', '${mst}')">
                             <i class="fas fa-trash"></i> Xóa
                         </button>
@@ -1933,12 +1937,50 @@
         // Handle file selection
         function handleFileSelect(event) {
             const file = event.target.files[0];
-            if (file && file.type === 'application/pdf') {
+            if (!file) return;
+            
+            // Security validation
+            if (!validateFileSecurity(file)) {
+                return;
+            }
+            
+            if (file.type === 'application/pdf') {
                 currentCertificateFile = file;
                 extractPDFInfo(file);
             } else {
                 showStatus('❌ Vui lòng chọn file PDF hợp lệ', 'error');
             }
+        }
+
+        // Enhanced file security validation
+        function validateFileSecurity(file) {
+            // Check file size (max 10MB)
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            if (file.size > maxSize) {
+                showStatus('❌ File quá lớn. Kích thước tối đa: 10MB', 'error');
+                return false;
+            }
+            
+            // Check file type
+            if (file.type !== 'application/pdf') {
+                showStatus('❌ Chỉ chấp nhận file PDF', 'error');
+                return false;
+            }
+            
+            // Check file name for suspicious patterns
+            const suspiciousPatterns = /\.(exe|bat|cmd|scr|pif|com)$/i;
+            if (suspiciousPatterns.test(file.name)) {
+                showStatus('❌ Tên file không hợp lệ', 'error');
+                return false;
+            }
+            
+            // Check for malicious content patterns
+            if (file.name.includes('..') || file.name.includes('/') || file.name.includes('\\')) {
+                showStatus('❌ Tên file chứa ký tự không hợp lệ', 'error');
+                return false;
+            }
+            
+            return true;
         }
 
         // Handle drag and drop
@@ -1958,6 +2000,12 @@
             const files = event.dataTransfer.files;
             if (files.length > 0) {
                 const file = files[0];
+                
+                // Security validation
+                if (!validateFileSecurity(file)) {
+                    return;
+                }
+                
                 if (file.type === 'application/pdf') {
                     currentCertificateFile = file;
                     extractPDFInfo(file);
@@ -2041,7 +2089,7 @@
             };
         }
 
-        // Save certificate
+        // Save certificate - Using LocalStorage instead of Firebase
         async function saveCertificate() {
             const mst = document.getElementById('certMstSelect').value;
             if (!mst) {
@@ -2055,54 +2103,47 @@
             }
 
             try {
-                showStatus('📤 Đang upload file PDF...', 'info');
+                showStatus('📤 Đang lưu file PDF...', 'info');
 
-                // Upload to Firebase Storage
-                const fileName = `certificates/${mst}/${Date.now()}_${currentCertificateFile.name}`;
-                const storageRef = storage.ref(fileName);
-                const uploadTask = storageRef.put(currentCertificateFile);
+                // Convert file to base64 for localStorage storage
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        // Create certificate object with base64 data
+                        const certificate = {
+                            id: `cert_${Date.now()}`,
+                            referenceNumber: document.getElementById('extractedRefNumber').value,
+                            amount: document.getElementById('extractedAmount').value,
+                            paymentDate: document.getElementById('extractedPaymentDate').value,
+                            status: document.getElementById('extractedStatus').value,
+                            fileName: currentCertificateFile.name,
+                            fileSize: currentCertificateFile.size,
+                            fileData: e.target.result, // Base64 data
+                            uploadDate: new Date().toISOString()
+                        };
 
-                uploadTask.on('state_changed', 
-                    (snapshot) => {
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        showStatus(`📤 Đang upload: ${Math.round(progress)}%`, 'info');
-                    },
-                    (error) => {
-                        console.error('Upload error:', error);
-                        showStatus('❌ Lỗi upload file', 'error');
-                    },
-                    async () => {
-                        try {
-                            const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-                            
-                            // Create certificate object
-                            const certificate = {
-                                id: `cert_${Date.now()}`,
-                                referenceNumber: document.getElementById('extractedRefNumber').value,
-                                amount: document.getElementById('extractedAmount').value,
-                                paymentDate: document.getElementById('extractedPaymentDate').value,
-                                status: document.getElementById('extractedStatus').value,
-                                pdfUrl: downloadURL,
-                                uploadDate: new Date().toISOString()
-                            };
+                        // Save to localStorage
+                        const certificates = JSON.parse(localStorage.getItem(`etax_certificates_${mst}`)) || [];
+                        certificates.push(certificate);
+                        localStorage.setItem(`etax_certificates_${mst}`, JSON.stringify(certificates));
 
-                            // Save to localStorage
-                            const certificates = JSON.parse(localStorage.getItem(`etax_certificates_${mst}`)) || [];
-                            certificates.push(certificate);
-                            localStorage.setItem(`etax_certificates_${mst}`, JSON.stringify(certificates));
-
-                            // Reset form
-                            cancelCertificateUpload();
-                            loadCertificatesForMst();
-                            
-                            showStatus('✅ Lưu chứng từ thành công!', 'success');
-                            
-                        } catch (error) {
-                            console.error('Error getting download URL:', error);
-                            showStatus('❌ Lỗi lấy link download', 'error');
-                        }
+                        // Reset form
+                        cancelCertificateUpload();
+                        loadCertificatesForMst();
+                        
+                        showStatus('✅ Lưu chứng từ thành công!', 'success');
+                        
+                    } catch (error) {
+                        console.error('Error saving certificate:', error);
+                        showStatus('❌ Lỗi khi lưu chứng từ', 'error');
                     }
-                );
+                };
+                
+                reader.onerror = function() {
+                    showStatus('❌ Lỗi đọc file PDF', 'error');
+                };
+                
+                reader.readAsDataURL(currentCertificateFile);
 
             } catch (error) {
                 console.error('Error saving certificate:', error);
@@ -2122,7 +2163,7 @@
             document.getElementById('extractedStatus').value = '';
         }
 
-        // Delete certificate
+        // Delete certificate - Using LocalStorage
         async function deleteCertificate(certId, mst) {
             if (!confirm('Bạn có chắc chắn muốn xóa chứng từ này?')) {
                 return;
@@ -2133,18 +2174,6 @@
                 const certIndex = certificates.findIndex(c => c.id === certId);
                 
                 if (certIndex !== -1) {
-                    const cert = certificates[certIndex];
-                    
-                    // Delete from Firebase Storage
-                    if (cert.pdfUrl && storage) {
-                        try {
-                            const fileRef = storage.refFromURL(cert.pdfUrl);
-                            await fileRef.delete();
-                        } catch (error) {
-                            console.error('Error deleting from storage:', error);
-                        }
-                    }
-                    
                     // Remove from localStorage
                     certificates.splice(certIndex, 1);
                     localStorage.setItem(`etax_certificates_${mst}`, JSON.stringify(certificates));
@@ -2169,6 +2198,40 @@
             return date.toLocaleDateString('vi-VN');
         }
 
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Download certificate file
+        function downloadCertificate(certId, mst) {
+            try {
+                const certificates = JSON.parse(localStorage.getItem(`etax_certificates_${mst}`)) || [];
+                const cert = certificates.find(c => c.id === certId);
+                
+                if (!cert || !cert.fileData) {
+                    showStatus('❌ Không tìm thấy file chứng từ', 'error');
+                    return;
+                }
+
+                // Create download link
+                const link = document.createElement('a');
+                link.href = cert.fileData;
+                link.download = cert.fileName || `certificate_${certId}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showStatus('✅ Đã tải file chứng từ', 'success');
+            } catch (error) {
+                console.error('Error downloading certificate:', error);
+                showStatus('❌ Lỗi khi tải file', 'error');
+            }
+        }
+
         // Initialize certificate management when tab is shown
         function showTab(tabName) {
             // Hide all tabs
@@ -2184,8 +2247,11 @@
             // Show selected tab
             document.getElementById(tabName).classList.add('active');
             
-            // Add active class to clicked button
-            event.target.classList.add('active');
+            // Add active class to clicked button - Fix event.target issue
+            const activeButton = document.querySelector(`[onclick*="showTab('${tabName}')"]`);
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
             
             // Load data for specific tabs
             if (tabName === 'certificateManager') {
@@ -2193,7 +2259,7 @@
             } else if (tabName === 'userList') {
                 loadUserList();
             } else if (tabName === 'dashboard') {
-                loadDashboard();
+                refreshStats(); // Use existing function instead of loadDashboard
             }
         }
     </script>
