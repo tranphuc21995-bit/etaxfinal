@@ -22,6 +22,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
     
     <!-- PDF.js CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -1109,7 +1110,7 @@
                     <div class="certificate-form-row">
                         <label>Upload file PDF chứng từ</label>
                         <div class="file-upload-area" onclick="document.getElementById('pdfFileInput').click()" 
-                             ondrop="handleFileDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                             ondrop="handleFileDrop(event)" ondragover="handleDragOver(event)" ondragenter="handleDragEnter(event)" ondragleave="handleDragLeave(event)">
                             <div class="upload-icon">
                                 <i class="fas fa-cloud-upload-alt"></i>
                             </div>
@@ -1381,6 +1382,20 @@
 
             // Lưu vào localStorage
             localStorage.setItem(`etax_user_data_${mst}`, JSON.stringify(newUserData));
+            
+            // Lưu vào Firestore để đồng bộ cross-device
+            if (db) {
+                db.collection('users').doc(mst).set(newUserData)
+                    .then(() => {
+                        console.log(`✅ User ${mst} saved to Firestore`);
+                    })
+                    .catch((error) => {
+                        console.error('❌ Error saving to Firestore:', error);
+                    });
+            }
+            
+            // Đồng bộ dữ liệu với các tab khác
+            syncDataToOtherTabs('user_created', { mst, userData: newUserData });
 
             showStatus(`✅ Đã thêm người dùng ${fullName} với MST ${mst} và ${currentTaxItems.length} khoản thuế`, 'success');
 
@@ -1870,6 +1885,7 @@
         }
 
         const storage = firebase.storage ? firebase.storage() : null;
+        const db = firebase.firestore ? firebase.firestore() : null;
 
         // Certificate Management Functions
         let currentCertificateFile = null;
@@ -1986,15 +2002,25 @@
         // Handle drag and drop
         function handleDragOver(event) {
             event.preventDefault();
+            event.stopPropagation();
+            event.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragEnter(event) {
+            event.preventDefault();
+            event.stopPropagation();
             event.currentTarget.classList.add('dragover');
         }
 
         function handleDragLeave(event) {
+            event.preventDefault();
+            event.stopPropagation();
             event.currentTarget.classList.remove('dragover');
         }
 
         function handleFileDrop(event) {
             event.preventDefault();
+            event.stopPropagation();
             event.currentTarget.classList.remove('dragover');
             
             const files = event.dataTransfer.files;
@@ -2073,19 +2099,14 @@
                 }
             }
             
-            // Determine status based on keywords
-            let status = 'Thành công';
-            if (text.includes('thành công') || text.includes('hoàn thành')) {
-                status = 'Thành công – NH/TGTT đã trừ tiền thành công';
-            } else if (text.includes('chờ') || text.includes('pending')) {
-                status = 'Đang chờ xử lý';
-            }
+            // FIXED STATUS FORMAT - ALWAYS use this exact 3-line format
+            const status = 'Thành công –\nNH/TGTT\nđã trừ tiền thành công';
 
             return {
                 referenceNumber: referenceNumber,
                 amount: amount.replace(/[^\d]/g, ''), // Remove non-digits
                 paymentDate: paymentDate,
-                status: status
+                status: status  // Fixed 3-line format with \n line breaks
             };
         }
 
@@ -2262,6 +2283,81 @@
                 refreshStats(); // Use existing function instead of loadDashboard
             }
         }
+
+        // BroadcastChannel để đồng bộ dữ liệu giữa các tab
+        let broadcastChannel;
+        
+        function initBroadcastChannel() {
+            if ('BroadcastChannel' in window) {
+                broadcastChannel = new BroadcastChannel('etax_sync');
+                
+                broadcastChannel.onmessage = function(event) {
+                    const { type, data } = event.data;
+                    
+                    if (type === 'user_created') {
+                        // Cập nhật localStorage từ tab khác
+                        localStorage.setItem(`etax_user_data_${data.mst}`, JSON.stringify(data.userData));
+                        console.log(`🔄 Synced user data for MST: ${data.mst}`);
+                        
+                        // Refresh UI nếu đang ở tab danh sách
+                        if (document.querySelector('.user-list-tab.active')) {
+                            loadUserList();
+                            refreshStats();
+                        }
+                    }
+                };
+            }
+        }
+
+        function syncDataToOtherTabs(type, data) {
+            if (broadcastChannel) {
+                broadcastChannel.postMessage({ type, data });
+                console.log(`📡 Synced data to other tabs: ${type}`);
+            }
+        }
+
+        // Khởi tạo BroadcastChannel khi trang load
+        initBroadcastChannel();
+        
+        // Load dữ liệu từ Firestore khi trang load
+        function loadDataFromFirestore() {
+            if (!db) {
+                console.log('⚠️ Firestore not available, using localStorage only');
+                return;
+            }
+            
+            console.log('🔄 Loading data from Firestore...');
+            
+            db.collection('users').get()
+                .then((querySnapshot) => {
+                    let loadedCount = 0;
+                    querySnapshot.forEach((doc) => {
+                        const mst = doc.id;
+                        const userData = doc.data();
+                        
+                        // Lưu vào localStorage
+                        localStorage.setItem(`etax_user_data_${mst}`, JSON.stringify(userData));
+                        loadedCount++;
+                        
+                        console.log(`📥 Loaded user data for MST: ${mst}`);
+                    });
+                    
+                    if (loadedCount > 0) {
+                        console.log(`✅ Loaded ${loadedCount} users from Firestore`);
+                        // Refresh UI
+                        loadUserList();
+                        refreshStats();
+                    } else {
+                        console.log('ℹ️ No users found in Firestore');
+                    }
+                })
+                .catch((error) => {
+                    console.error('❌ Error loading from Firestore:', error);
+                });
+        }
+        
+        // Load dữ liệu từ Firestore khi trang load
+        loadDataFromFirestore();
     </script>
 </body>
 </html>

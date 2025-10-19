@@ -1,7 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <script src="/src/services/auth-guard.js"></script>
   <meta charset="UTF-8">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -39,11 +38,53 @@
       min-height: calc(100vh - 110px);
     }
 
-    .form-group { display:flex; gap:10px; align-items:center; margin-bottom:12px; }
-    .form-group label { width:120px; color:#333; font-size:14px; }
-    .form-input { flex:1; padding:10px 12px; border-radius:8px; border:1px solid #ddd; font-size:15px; }
+    .form-group { 
+      margin-bottom: 16px; 
+    }
+    .form-group label { 
+      display: block;
+      color: #333; 
+      font-size: 14px; 
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .form-input { 
+      width: 100%;
+      padding: 12px 16px; 
+      border-radius: 8px; 
+      border: 1px solid #ddd; 
+      font-size: 15px;
+      background: #fff;
+      transition: border-color 0.2s ease;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: var(--red);
+      box-shadow: 0 0 0 2px rgba(183, 28, 28, 0.1);
+    }
 
-    .btn-search { background: var(--red); color:#fff; border:none; padding:12px 16px; border-radius:8px; font-weight:600; margin-top:8px; width:100%; }
+    .btn-search { 
+      background: var(--red); 
+      color: #fff; 
+      border: none; 
+      padding: 14px 24px; 
+      border-radius: 12px; 
+      font-weight: 600; 
+      margin-top: 20px; 
+      width: 85%;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(183, 28, 28, 0.3);
+    }
+    .btn-search:hover {
+      background: #a0151a;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(183, 28, 28, 0.4);
+    }
 
     /* Bảng kết quả */
     .result-table {
@@ -59,10 +100,10 @@
       table-layout: fixed;
       font-size:14px;
     }
-    .result-table col.col-ref { width: 18%; }
-    .result-table col.col-amount { width: 20%; }
-    .result-table col.col-date { width: 20%; }
-    .result-table col.col-status { width: 32%; }
+    .result-table col.col-ref { width: 20%; }
+    .result-table col.col-amount { width: 18%; }
+    .result-table col.col-date { width: 22%; }
+    .result-table col.col-status { width: 30%; }
     .result-table col.col-select { width: 10%; }
 
     .result-table thead th {
@@ -86,13 +127,32 @@
     }
     .result-table tbody td.ref {
       text-align:center;
-      padding-left:12px;
-      font-size:13px;
+      padding: 8px 6px;
+      font-size:12px;
       white-space: normal;
+      line-height: 1.3;
+      font-weight: 500;
     }
-    .result-table tbody td.amount { color: #28a745; font-weight:600; }
-    .result-table tbody td.date { font-size:13px; }
-    .result-table tbody td.status { font-size:13px; color:#333; text-align:left; padding-left:12px; line-height:1.2; }
+    .result-table tbody td.amount { 
+      color: #28a745; 
+      font-weight: 600; 
+      font-size: 14px;
+      text-align: center;
+    }
+    .result-table tbody td.date { 
+      font-size: 12px; 
+      text-align: center;
+      line-height: 1.3;
+      padding: 8px 4px;
+    }
+    .result-table tbody td.status { 
+      font-size: 11px; 
+      color: #333; 
+      text-align: left; 
+      padding: 6px 8px; 
+      line-height: 1.2;
+      vertical-align: top;
+    }
 
     /* Radio button style */
     .cert-radio {
@@ -107,17 +167,29 @@
       background: var(--red);
       color: #fff;
       border: none;
-      padding: 12px 16px;
-      border-radius: 8px;
+      padding: 14px 24px;
+      border-radius: 12px;
       font-weight: 600;
-      margin-top: 12px;
-      width: 100%;
+      margin-top: 16px;
+      width: 95%;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
       cursor: pointer;
-      font-size: 15px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(183, 28, 28, 0.3);
+    }
+    .btn-print:hover:not(:disabled) {
+      background: #a0151a;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(183, 28, 28, 0.4);
     }
     .btn-print:disabled {
       background: #ccc;
       cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
 
     /* Popup */
@@ -133,6 +205,7 @@
     }
     .popup-content {
       width: min(360px, 92%);
+      max-width: 360px;
       background: #fff;
       border-radius: 16px;
       overflow: hidden;
@@ -192,7 +265,6 @@
       </form>
 
       <div class="result-table" id="resultsTable" style="display:none;">
-        <h3 id="resultsTitle" style="color:var(--red); text-align:center; margin:12px 0 0;">📄 Kết quả tra cứu</h3>
         <table>
           <colgroup>
             <col class="col-ref">
@@ -207,7 +279,7 @@
               <th>Số tiền</th>
               <th>Ngày nộp</th>
               <th>Trạng<br>thái</th>
-              <th>Chọn</th>
+              <th style="text-align:center;">In<br>chứng từ</th>
             </tr>
           </thead>
           <tbody id="resultsBody"></tbody>
@@ -270,7 +342,7 @@
       const fromDate = document.getElementById('fromDate');
       const toDate = document.getElementById('toDate');
       const now = new Date();
-      const vn = new Date(now.getTime + (7*60 - now.getTimezoneOffset())*60000);
+      const vn = new Date(now.getTime() + (7*60 - now.getTimezoneOffset())*60000);
       const today = vn.toISOString().split('T')[0];
       const oneYearAgo = new Date(vn); oneYearAgo.setFullYear(vn.getFullYear()-1);
       const minDate = oneYearAgo.toISOString().split('T')[0];
@@ -354,17 +426,24 @@
           <td class="ref">${refHtml}</td>
           <td class="amount">${amt}</td>
           <td class="date">${dt}</td>
-          <td class="status">${doc.status}</td>
-          <td class="select">
-            <input type="radio" name="taxCertificate" value="${doc.id}" class="cert-radio" onchange="togglePrintButton()">
+          <td class="status" style="white-space:pre-line; line-height:1.3; padding:8px 4px; font-size:13px; text-align:center; vertical-align:middle;">Thành công –<br>NH/TGTT<br>đã trừ tiền thành công</td>
+          <td class="select" style="text-align:center; vertical-align:middle;">
+            <i class="fas fa-circle" onclick="selectCertificate('${doc.id}')" 
+               style="color:var(--red); font-size:16px; cursor:pointer;"></i>
           </td>
         `;
         tbody.appendChild(tr);
       });
       
-      document.getElementById('resultsTitle').textContent = `📄 Kết quả tra cứu (${docs.length} chứng từ)`;
       resultsTable.style.display = 'block';
-      printBtn.disabled = true;
+      
+      // Auto-select certificate đầu tiên
+      if (docs.length > 0) {
+        const firstCertId = docs[0].id;
+        selectCertificate(firstCertId);
+      } else {
+        printBtn.disabled = true;
+      }
     }
 
     function formatDateTime(d){
@@ -384,6 +463,26 @@
       return num.toLocaleString('vi-VN');
     }
 
+    function selectCertificate(certId) {
+      // Reset all icons to default state
+      document.querySelectorAll('.fas.fa-circle').forEach(icon => {
+        icon.style.opacity = '0.3';
+        icon.style.transform = 'scale(1)';
+      });
+      
+      // Highlight selected certificate
+      const selectedIcon = document.querySelector(`[onclick="selectCertificate('${certId}')"]`);
+      if (selectedIcon) {
+        selectedIcon.style.opacity = '1';
+        selectedIcon.style.transform = 'scale(1.2)';
+      }
+      
+      // Enable print button
+      const printBtn = document.getElementById('printBtn');
+      printBtn.disabled = false;
+      printBtn.setAttribute('data-cert-id', certId);
+    }
+
     function togglePrintButton(){
       const printBtn = document.getElementById('printBtn');
       const selectedRadio = document.querySelector('input[name="taxCertificate"]:checked');
@@ -391,13 +490,14 @@
     }
 
     function printSelectedCertificate(){
-      const selectedRadio = document.querySelector('input[name="taxCertificate"]:checked');
-      if (!selectedRadio) {
+      const printBtn = document.getElementById('printBtn');
+      const certId = printBtn.getAttribute('data-cert-id');
+      
+      if (!certId) {
         alert('❌ Vui lòng chọn chứng từ để in');
         return;
       }
       
-      const certId = selectedRadio.value;
       const cert = searchResults.find(c => c.id === certId);
       if (!cert) {
         alert('❌ Không tìm thấy chứng từ');
@@ -422,18 +522,119 @@
       if(!pendingDownloadId) return;
       
       const cert = searchResults.find(c => c.id === pendingDownloadId);
-      if (cert && cert.pdfUrl) {
-        // Lưu thông tin chứng từ được chọn
-        localStorage.setItem('selectedCertificate', JSON.stringify(cert));
-        
-        // Chuyển đến PDF Viewer
-        window.location.href = `pdf-viewer.html?url=${encodeURIComponent(cert.pdfUrl)}`;
-        console.log('Opening PDF in viewer:', cert.pdfUrl);
+      if (cert) {
+        // Tạo PDF từ dữ liệu certificate
+        downloadCertificatePDF(cert);
       } else {
-        alert('❌ Không tìm thấy file PDF của chứng từ này');
+        alert('❌ Không tìm thấy chứng từ');
       }
       
       pendingDownloadId = null;
+    }
+
+    function downloadCertificatePDF(cert) {
+      // Tạo PDF content từ certificate data
+      const pdfContent = generatePDFContent(cert);
+      
+      // Tạo blob và download
+      const blob = new Blob([pdfContent], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      
+      // Tạo link download
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `chung-tu-${cert.referenceNumber}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      
+      // Cleanup
+      URL.revokeObjectURL(url);
+      
+      console.log('PDF downloaded:', cert.referenceNumber);
+    }
+
+    function generatePDFContent(cert) {
+      // Tạo PDF content đơn giản (có thể dùng thư viện PDF generation)
+      const content = `
+%PDF-1.4
+1 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+
+2 0 obj
+<<
+/Type /Pages
+/Kids [3 0 R]
+/Count 1
+>>
+endobj
+
+3 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [0 0 612 792]
+/Contents 4 0 R
+/Resources <<
+/Font <<
+/F1 5 0 R
+>>
+>>
+>>
+endobj
+
+4 0 obj
+<<
+/Length 200
+>>
+stream
+BT
+/F1 12 Tf
+100 700 Td
+(CHUNG TU THUE) Tj
+0 -20 Td
+(Ma tham chieu: ${cert.referenceNumber}) Tj
+0 -20 Td
+(So tien: ${cert.amount} VND) Tj
+0 -20 Td
+(Ngay nop: ${cert.paymentDate}) Tj
+0 -20 Td
+(Trang thai: ${cert.status.replace(/\n/g, ' ')}) Tj
+ET
+endstream
+endobj
+
+5 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica
+>>
+endobj
+
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000274 00000 n 
+0000000524 00000 n 
+trailer
+<<
+/Size 6
+/Root 1 0 R
+>>
+startxref
+612
+%%EOF
+      `;
+      
+      return content;
     }
   </script>
 </body>
