@@ -143,5 +143,17 @@ __pycache__/
 
 # Development files
 dev/
-scripts/
 cursor-test-repo/
+
+# Screenshot and temporary files
+ảnh gốc/
+screenshot-*.png
+auto-styling-extractor.html
+debug-login.html
+agent.md
+TEST-*.md
+firebase-debug.log
+*.debug.log
+
+# Backup and temporary HTML files
+screenshot-overlay-tool.html
