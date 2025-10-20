@@ -38,34 +38,42 @@ input, textarea {
 
 html,
 body {
-    height: 100%;
+    height: 100vh !important;
+    max-height: 100vh !important;
     font-family: "Inter", "Roboto", "Helvetica Neue", "Segoe UI", sans-serif;
     color: #fff;
     overflow: hidden;
     position: fixed;
-    width: 100%;
-    height: 100%;
+    width: 100vw !important;
     background: transparent;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 body {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
     overflow: hidden;
     -webkit-font-smoothing: antialiased;
     -webkit-overflow-scrolling: touch;
     background: transparent;
-    margin: 0;
-    padding: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100vh !important;
+    height: 100vh !important;
+    width: 100vw !important;
 }
 
 .background {
     position: fixed;
     inset: 0;
     z-index: -2;
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh; /* Đảm bảo cover full viewport */
 }
 
 .background img {
@@ -163,6 +171,11 @@ body {
     letter-spacing: 0.2px;
     font-family: "Inter", "Roboto", sans-serif;
     font-weight: 500;
+    min-height: 44px; /* Touch-friendly minimum */
+    padding: 8px 0;
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-text-size-adjust: 100%; /* Prevent zoom on iOS */
 }
 
 .field-input input::placeholder {
@@ -203,6 +216,7 @@ body {
 .btn-primary {
     flex: 1;
     height: 54px;
+    min-height: 44px; /* Touch-friendly minimum */
     border: none;
     border-radius: 999px;
     background: linear-gradient(180deg, #ff3b2f 0%, #d30000 100%);
@@ -213,6 +227,13 @@ body {
     cursor: pointer;
     box-shadow: 0 18px 28px rgba(182, 12, 12, 0.5);
     font-family: "Inter", "Roboto", sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform 0.1s ease;
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
 }
 
 .faceid {
@@ -234,17 +255,27 @@ body {
     align-items: center;
     border: none;
     padding: 18px 20px;
+    min-height: 44px; /* Touch-friendly minimum */
     border-radius: 14px;
     background: #fff;
     box-shadow: 0 15px 26px rgba(0, 0, 0, 0.3);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform 0.1s ease;
+    cursor: pointer;
+}
+
+.vneid-button:active {
+    transform: scale(0.98);
 }
 
 .vneid-text {
     color: #222;
-    text-align: left;
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 1.3;
+    text-align: center; /* Căn giữa giống ảnh tham khảo */
+    font-size: 17px; /* Giữ kích thước */
+    font-weight: 600; /* Tăng lên 600 để đậm giống ảnh tham khảo */
+    line-height: 1.4;
+    letter-spacing: 0.2px; /* Giảm letter spacing một chút */
 }
 
 .vneid-button img {
@@ -275,12 +306,18 @@ body {
 
 .nav-bar {
     position: fixed;
-    bottom: 20px;
+    bottom: 0px !important; /* Force stick sát bottom */
     left: 0;
     right: 0;
     display: flex;
     justify-content: space-around;
-    padding: 0 40px;
+    padding: 10px 40px 0px; /* Chỉ padding top, không padding bottom */
+    margin: 0 !important; /* Loại bỏ tất cả margin */
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    min-height: 60px; /* Đảm bảo height đủ cho touch targets */
+    box-sizing: border-box;
+    z-index: 1000;
 }
 
 .nav-item {
@@ -294,6 +331,16 @@ body {
     opacity: 0.85;
     letter-spacing: 0.2px;
     font-weight: 500;
+    min-width: 44px; /* Touch-friendly minimum */
+    min-height: 44px;
+    padding: 4px;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: opacity 0.2s ease;
+}
+
+.nav-item:active {
+    opacity: 1;
 }
 
 .nav-item img {
@@ -302,15 +349,299 @@ body {
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
-@media (max-width: 400px) {
+/* ===== RESPONSIVE BREAKPOINTS ===== */
+
+/* Extra Small Phones - 320px-359px (Galaxy S5, iPhone SE 1st gen) */
+@media (max-width: 359px) {
     .screen {
-        padding: 50px 22px 110px;
+        padding: 40px 16px 90px;
         height: 100vh;
         overflow: hidden;
     }
+    
+    .brand .logo-circle {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .brand h1 {
+        font-size: 22px;
+    }
+    
+    .login-form {
+        max-width: 280px;
+    }
+    
+    .field-label {
+        font-size: 14px;
+    }
+    
+    .field-input input {
+        font-size: 14px;
+    }
+    
+    .btn-primary {
+        height: 48px;
+        font-size: 15px;
+    }
+    
+    .faceid {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .vneid-text {
+        font-size: 15px;
+        font-weight: 600; /* Đậm hơn */
+        letter-spacing: 0.1px;
+    }
+    
+    .register {
+        font-size: 12px;
+    }
+    
+    .nav-bar {
+        padding: 0 20px;
+        bottom: 15px;
+    }
+    
+    .nav-item img {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .nav-item {
+        font-size: 11px;
+    }
+}
 
+/* Small Phones - 360px-389px (Galaxy S6/S7, Pixel) */
+@media (min-width: 360px) and (max-width: 389px) {
+    .screen {
+        padding: 45px 18px 95px;
+        height: 100vh;
+        overflow: hidden;
+    }
+    
+    .brand .logo-circle {
+        width: 110px;
+        height: 110px;
+    }
+    
+    .brand h1 {
+        font-size: 24px;
+    }
+    
+    .login-form {
+        max-width: 320px;
+    }
+    
+    .field-label {
+        font-size: 15px;
+    }
+    
+    .field-input input {
+        font-size: 15px;
+    }
+    
+    .btn-primary {
+        height: 50px;
+        font-size: 15px;
+    }
+    
+    .faceid {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .vneid-text {
+        font-size: 16px;
+        font-weight: 600; /* Đậm hơn */
+        letter-spacing: 0.1px;
+    }
+    
+    .register {
+        font-size: 12px;
+    }
+    
+    .nav-bar {
+        padding: 0 24px;
+        bottom: 18px;
+    }
+    
+    .nav-item img {
+        width: 34px;
+        height: 34px;
+    }
+    
+    .nav-item {
+        font-size: 11px;
+    }
+}
+
+/* Medium Phones - 390px-413px (iPhone 12/13/14, Pixel 3) */
+@media (min-width: 390px) and (max-width: 413px) {
+    .screen {
+        padding: 50px 20px 100px;
+        height: 100vh;
+        overflow: hidden;
+    }
+    
+    .brand .logo-circle {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .brand h1 {
+        font-size: 25px;
+    }
+    
+    .login-form {
+        max-width: 340px;
+    }
+    
+    .field-label {
+        font-size: 15px;
+    }
+    
+    .field-input input {
+        font-size: 16px;
+    }
+    
+    .btn-primary {
+        height: 52px;
+        font-size: 16px;
+    }
+    
+    .faceid {
+        width: 52px;
+        height: 52px;
+    }
+    
+    .vneid-text {
+        font-size: 16px;
+        font-weight: 600; /* Đậm hơn */
+        letter-spacing: 0.1px;
+    }
+    
+    .register {
+        font-size: 13px;
+    }
+    
     .nav-bar {
         padding: 0 28px;
+        bottom: 20px;
+    }
+    
+    .nav-item img {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .nav-item {
+        font-size: 12px;
+    }
+}
+
+/* Large Phones - 414px+ (iPhone Plus, Pro Max, Android Large) */
+@media (min-width: 414px) {
+    .screen {
+        padding: 55px 24px 105px;
+        height: 100vh;
+        overflow: hidden;
+    }
+    
+    .brand .logo-circle {
+        width: 130px;
+        height: 130px;
+    }
+    
+    .brand h1 {
+        font-size: 26px;
+    }
+    
+    .login-form {
+        max-width: 360px;
+    }
+    
+    .field-label {
+        font-size: 16px;
+    }
+    
+    .field-input input {
+        font-size: 16px;
+    }
+    
+    .btn-primary {
+        height: 54px;
+        font-size: 16px;
+    }
+    
+    .faceid {
+        width: 54px;
+        height: 54px;
+    }
+    
+    .vneid-text {
+        font-size: 17px;
+        font-weight: 600; /* Đậm hơn giống ảnh tham khảo */
+        letter-spacing: 0.2px;
+    }
+    
+    .register {
+        font-size: 13px;
+    }
+    
+    .nav-bar {
+        padding: 0 32px;
+        bottom: 20px;
+    }
+    
+    .nav-item img {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .nav-item {
+        font-size: 12px;
+    }
+}
+
+/* Landscape orientation adjustments */
+@media (orientation: landscape) and (max-height: 500px) {
+    .screen {
+        padding: 20px 24px 80px;
+        justify-content: flex-start;
+    }
+    
+    .brand {
+        margin-bottom: 15px;
+    }
+    
+    .brand .logo-circle {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .brand h1 {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+    
+    .action-row {
+        margin-top: 20px;
+    }
+    
+    .vneid {
+        margin-top: 8px;
+    }
+    
+    .register {
+        margin-top: 8px;
+    }
+    
+    .nav-bar {
+        bottom: 10px;
     }
 }
 

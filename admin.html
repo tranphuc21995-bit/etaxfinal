@@ -2358,6 +2358,82 @@
         
         // Load dữ liệu từ Firestore khi trang load
         loadDataFromFirestore();
+        
+        // Tạo tài khoản demo tự động
+        setTimeout(() => {
+            createDemoAccount();
+        }, 3000);
+
+        // Tạo tài khoản demo
+        function createDemoAccount() {
+            const demoMST = '1221995';
+            const demoPassword = '123456';
+            
+            // Kiểm tra xem đã có demo account chưa (force recreate for debugging)
+            const existingDemo = localStorage.getItem(`etax_user_data_${demoMST}`);
+            if (existingDemo) {
+                console.log('⚠️ Demo account exists, recreating for debug...');
+                // Force recreate for debugging
+            }
+            
+            console.log('🔧 Creating demo account...');
+            
+            const demoUserData = {
+                mst: demoMST,
+                password: demoPassword,
+                companyName: 'Công ty Demo Testing',
+                address: '123 Đường Demo, Quận 1, TP.HCM',
+                phone: '0123456789',
+                email: 'demo@etax.com',
+                representative: 'Nguyễn Văn Demo',
+                fullName: 'Nguyễn Văn Demo',
+                businessType: 'Công ty TNHH',
+                taxOffice: 'Cục Thuế TP.HCM',
+                taxInfo: {
+                    period: '2024',
+                    quarter: 'Q4',
+                    revenue: 1000000000,
+                    tax: 100000000,
+                    status: 'Đã nộp'
+                },
+                createdAt: new Date().toISOString(),
+                createdBy: 'auto-demo'
+            };
+            
+            // Lưu vào localStorage
+            localStorage.setItem(`etax_user_data_${demoMST}`, JSON.stringify(demoUserData));
+            
+            // Lưu vào Firestore
+            if (db) {
+                db.collection('users').doc(demoMST).set(demoUserData)
+                    .then(() => {
+                        console.log('✅ Demo account saved to Firestore');
+                    })
+                    .catch(error => {
+                        console.error('❌ Error saving demo to Firestore:', error);
+                    });
+            }
+            
+            // Broadcast để sync với login page
+            if (typeof BroadcastChannel !== 'undefined' && broadcastChannel) {
+                broadcastChannel.postMessage({
+                    type: 'user_created',
+                    mst: demoMST,
+                    userData: demoUserData
+                });
+                console.log('📡 Demo account broadcasted to login page');
+            }
+            
+            console.log('✅ Demo account created successfully!');
+            console.log('📋 MST: 1221995');
+            console.log('🔑 Password: 123456');
+            
+            showStatus('✅ Tài khoản demo đã được tạo! MST: 1221995, Password: 123456', 'success');
+            
+            // Refresh UI
+            loadUserList();
+            refreshStats();
+        }
     </script>
 </body>
 </html>
